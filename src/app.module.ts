@@ -7,6 +7,10 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigEnum } from './enum/config.enum';
 import * as Joi from 'joi';
 import * as dotenv from 'dotenv';
+import { Users } from './users/users.entity';
+import { Profile } from './users/profile.entity';
+import { Logs } from './logs/logs.entity';
+import { Roles } from './roles/roles.entity';
 
 const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
 
@@ -29,7 +33,6 @@ const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
         DB_SYNC: Joi.boolean().default(false),
       }),
     }),
-    UsersModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -41,12 +44,13 @@ const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
           username: configService.get(ConfigEnum.DB_USERNAME),
           password: configService.get(ConfigEnum.DB_PASSWORD),
           database: configService.get(ConfigEnum.DB_DATABASE),
-          entities: [],
+          entities: [Users, Profile, Logs, Roles],
           // 同步本地的schema与数据库 -> 初始化的时候去使用
           synchronize: configService.get(ConfigEnum.DB_SYNC),
-          logging: ['error'],
+          logging: process.env.NODE_ENV == 'development',
         } as TypeOrmModuleOptions),
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,0 +1,23 @@
+{
+  "name": "NestJS Debug",
+  "type": "node",
+  "request": "launch",
+  "protocol": "inspector",
+  "timeout": 25000,
+  "port": 9229,
+  "runtimeArgs": ["run-script", "start:debug"],
+  "sourceMaps": true,
+  "cwd": "${workspaceRoot}",
+  "runtimeExecutable": "pnpm",
+  "windows": {
+    "runtimeExecutable": "pnpm.cmd"
+  },
+  "envFile": ["${workspaceRoot}/.env", "${workspaceRoot}/.env.development"],
+  "skipFiles": [
+    "${workspaceRoot}/node_modules/**/*.js",
+    "<node_internals>/**/*.js"
+  ],
+  "console": "integratedTerminal",
+  "outputCapture": "std",
+  "autoAttachChildProcesses": true
+}

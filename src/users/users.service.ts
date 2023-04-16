@@ -1,20 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Users } from './users.entity';
+import { Repository } from 'typeorm';
+import { Logs } from 'src/logs/logs.entity';
 
 @Injectable()
 export class UserService {
-  getUsers() {
-    return {
-      code: 0,
-      data: [],
-      msg: '请求用户列表成功！',
-    };
+  constructor(
+    @InjectRepository(Users) private readonly userRepository: Repository<Users>,
+    @InjectRepository(Logs) private readonly logsRepository: Repository<Logs>,
+  ) {}
+  async findOne(id: number) {
+    return this.userRepository.findOne({ where: { id } });
   }
+  findProfile(id: number) {
+    return this.userRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        profile: true,
+      },
+    });
+  }
+  async findUsersLogs(id: number) {
+    const users = await this.findOne(id);
 
-  addUser() {
-    return {
-      code: 0,
-      data: {},
-      msg: '添加用户成功',
-    };
+    return this.logsRepository.find({
+      where: {
+        users,
+      },
+      relations: {
+        users: true,
+      },
+    });
   }
 }
