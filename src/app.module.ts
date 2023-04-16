@@ -1,19 +1,16 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Global, Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { ConfigEnum } from './enum/config.enum';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import * as dotenv from 'dotenv';
-import { Users } from './users/users.entity';
-import { Profile } from './users/profile.entity';
-import { Logs } from './logs/logs.entity';
-import { Roles } from './roles/roles.entity';
+import { Logger } from '@nestjs/common';
+import { LogsModule } from './logs/logs.module';
+import ormConfig from '../ormConfig';
 
 const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
 
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,26 +30,12 @@ const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
         DB_SYNC: Joi.boolean().default(false),
       }),
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        ({
-          type: configService.get(ConfigEnum.DB_TYPE),
-          host: configService.get(ConfigEnum.DB_HOST),
-          port: configService.get(ConfigEnum.DB_PORT),
-          username: configService.get(ConfigEnum.DB_USERNAME),
-          password: configService.get(ConfigEnum.DB_PASSWORD),
-          database: configService.get(ConfigEnum.DB_DATABASE),
-          entities: [Users, Profile, Logs, Roles],
-          // 同步本地的schema与数据库 -> 初始化的时候去使用
-          synchronize: configService.get(ConfigEnum.DB_SYNC),
-          logging: process.env.NODE_ENV == 'development',
-        } as TypeOrmModuleOptions),
-    }),
+    TypeOrmModule.forRoot(ormConfig),
     UsersModule,
+    LogsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [Logger],
+  exports: [Logger],
 })
 export class AppModule {}
