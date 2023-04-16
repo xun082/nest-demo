@@ -1,8 +1,8 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Logs } from 'src/logs/logs.entity';
-import { Roles } from 'src/roles/roles.entity';
-import { Profile } from 'src/users/profile.entity';
-import { Users } from 'src/users/users.entity';
+import { Logs } from './src/logs/logs.entity';
+import { Roles } from './src/roles/roles.entity';
+import { Profile } from './src/users/profile.entity';
+import { Users } from './src/users/users.entity';
 
 export default {
   type: 'mysql',

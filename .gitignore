@@ -3,8 +3,7 @@
 /node_modules
 
 # Logs
-logs
-*.log
+/logs
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
