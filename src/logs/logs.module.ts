@@ -17,11 +17,14 @@ const consoleTransports = new Console({
   format,
 });
 
-function daily(level: 'warn' | 'info'): DailyRotateFile {
+function dailyRecord(
+  level: 'warn' | 'info',
+  filename: string,
+): DailyRotateFile {
   return new DailyRotateFile({
     level,
     dirname: 'logs',
-    filename: 'application-%DATE%.log',
+    filename: `${filename}-%DATE%.log`,
     datePattern: 'YYYY-MM-DD-HH',
     zippedArchive: true,
     maxSize: '20m',
@@ -39,7 +42,10 @@ function daily(level: 'warn' | 'info'): DailyRotateFile {
           transports: [
             consoleTransports,
             ...(configService.get(LogEnum.LOG_ON)
-              ? [daily('info'), daily('warn')]
+              ? [
+                  dailyRecord('info', 'application'),
+                  dailyRecord('warn', 'error'),
+                ]
               : []),
           ],
         } as WinstonModuleOptions;

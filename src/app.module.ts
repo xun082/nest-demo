@@ -6,7 +6,7 @@ import * as Joi from 'joi';
 import * as dotenv from 'dotenv';
 import { Logger } from '@nestjs/common';
 import { LogsModule } from './logs/logs.module';
-import ormConfig from '../ormConfig';
+import { connectionParams } from '../ormConfig';
 
 const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
 
@@ -22,15 +22,20 @@ const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
           .valid('development', 'production')
           .default('development'),
         DB_PORT: Joi.number().default(3306),
-        DB_HOST: Joi.string().ip(),
+        DB_HOST: Joi.alternatives().try(
+          Joi.string().ip(),
+          Joi.string().domain(),
+        ),
         DB_TYPE: Joi.string().valid('mysql', 'postgres'),
         DB_DATABASE: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_SYNC: Joi.boolean().default(false),
+        LOG_ON: Joi.boolean(),
+        LOG_LEVEL: Joi.string(),
       }),
     }),
-    TypeOrmModule.forRoot(ormConfig),
+    TypeOrmModule.forRoot(connectionParams),
     UsersModule,
     LogsModule,
   ],
