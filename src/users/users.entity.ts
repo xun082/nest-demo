@@ -1,6 +1,7 @@
 import { Logs } from '../logs/logs.entity';
 import { Roles } from '../roles/roles.entity';
 import {
+  AfterInsert,
   Column,
   Entity,
   ManyToMany,
@@ -15,7 +16,9 @@ export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   username: string;
 
   @Column()
