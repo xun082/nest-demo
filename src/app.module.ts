@@ -7,6 +7,7 @@ import * as dotenv from 'dotenv';
 import { Logger } from '@nestjs/common';
 import { LogsModule } from './logs/logs.module';
 import { connectionParams } from '../ormConfig';
+import { AuthModule } from './auth/auth.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
 
@@ -38,6 +39,7 @@ const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
     TypeOrmModule.forRoot(connectionParams),
     UsersModule,
     LogsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [Logger],

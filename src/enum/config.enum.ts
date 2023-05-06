@@ -6,6 +6,9 @@ export enum ConfigEnum {
   DB_USERNAME = 'DB_USERNAME',
   DB_PASSWORD = 'DB_PASSWORD',
   DB_SYNC = 'DB_SYNC',
+  SECRET = 'SECRET',
+  CLIENT_ID = 'CLIENT_ID',
+  CLIENT_SECRET = 'CLIENT_SECRET',
 }
 
 export enum LogEnum {

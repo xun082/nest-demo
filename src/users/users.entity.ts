@@ -4,12 +4,14 @@ import {
   AfterInsert,
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Profile } from './profile.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Users {
@@ -22,14 +24,20 @@ export class Users {
   username: string;
 
   @Column()
+  @Exclude()
   password: string;
 
-  @OneToMany(() => Logs, (logs) => logs.users)
+  @OneToMany(() => Logs, (logs) => logs.users, { cascade: true })
   logs: Logs[];
 
-  @ManyToMany(() => Roles, (roles) => roles.users)
+  @ManyToMany(() => Roles, (roles) => roles.users, {
+    cascade: ['insert'],
+  })
+  @JoinTable({ name: 'users_roles' })
   roles: Roles[];
 
-  @OneToOne(() => Profile, (profile) => profile.users)
+  @OneToOne(() => Profile, (profile) => profile.users, {
+    cascade: true,
+  })
   profile: Profile;
 }

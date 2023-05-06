@@ -11,37 +11,54 @@ import {
   Headers,
   UseFilters,
   UnauthorizedException,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import { Users } from './users.entity';
 import { getUserDto } from './dto/get-user.dto';
 import { TypeOrmFilter } from 'src/filters/typeOrm.filter';
+import { CreateUserPipe } from './pipes/create-user.pipe';
+import { CreateUserDto } from './dto/create-user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { AdminGuard } from 'src/guards/admin.guard';
+import { JwtGuard } from 'src/guards/jwt.guard';
 
 @Controller('user')
 @UseFilters(new TypeOrmFilter())
+@UseInterceptors(ClassSerializerInterceptor)
+// @UseGuards(JwtGuard)
 export class UserController {
   constructor(
     private userService: UserService,
     private readonly logger: Logger,
-  ) {
-    this.logger.log('你个叼毛');
+  ) {}
+
+  @Get('/profile/:id')
+  @UseGuards(AuthGuard('jwt'))
+  getProfile(@Param('id') id: number): any {
+    return this.userService.findProfile(id);
   }
-  @Get('/profile')
-  getProfile(): any {
-    return this.userService.findProfile(1);
+
+  @Get('/index')
+  index() {
+    return 1;
   }
+
   @Get('/logs')
   getUsersLogs(): any {
     return this.userService.findUsersLogs(1);
   }
 
   @Get()
+  @UseGuards(AdminGuard)
   getUsers(@Query() query: getUserDto): any {
     return this.userService.findAll(query);
   }
 
   @Post()
-  addUser(@Body() dto: any): any {
+  addUser(@Body(CreateUserPipe) dto: CreateUserDto): any {
     const user = dto as Users;
 
     return this.userService.create(user);

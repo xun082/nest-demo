@@ -13,9 +13,11 @@ export class Roles {
   id: number;
 
   @Column()
-  name: number;
+  name: string;
 
-  @ManyToMany(() => Users, (users) => users.roles)
+  @ManyToMany(() => Users, (users) => users.roles, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable({ name: 'users_roles' })
   users: Users[];
 }

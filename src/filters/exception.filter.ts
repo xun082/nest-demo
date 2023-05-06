@@ -6,7 +6,7 @@ import {
   ArgumentsHost,
   Catch,
 } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';       
+import { HttpAdapterHost } from '@nestjs/core';
 import * as requestIp from 'request-ip';
 import { QueryFailedError } from 'typeorm';
 
@@ -16,7 +16,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     private readonly logger: LoggerService,
     private readonly httpAdapterHost: HttpAdapterHost,
   ) {}
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
     const request = ctx.getRequest();
@@ -38,10 +38,8 @@ export class AllExceptionFilter implements ExceptionFilter {
       body: request.body,
       params: request.params,
       timestamp: new Date().toISOString(),
-      // 还可以加入一些用户信息
-      // IP信息
       ip: requestIp.getClientIp(request),
-      exception: exception['name'],
+      exception,
       error: errorMessage,
     };
 
