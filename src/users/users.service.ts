@@ -81,6 +81,13 @@ export class UserService {
   }
 
   async create(user: Users) {
+    if (!user.roles) {
+      const role = await this.rolesRepository.findOne({
+        where: { id: 2 },
+      });
+      user.roles = [role];
+    }
+
     if (user.roles instanceof Array && typeof user.roles[0] === 'number') {
       user.roles = await this.rolesRepository.find({
         where: {
